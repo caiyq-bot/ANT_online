@@ -1,0 +1,13 @@
+cue,target,correct
+DC,<<><<,j
+DC,--<--,f
+DC,>>>>>,j
+SC,-->--,j
+SC,<<<<<,f
+SC,<<><<,j
+NC,<<<<<,f
+NC,<<><<,j
+NC,--<--,f
+CC,--<--,f
+CC,>><>>,f
+CC,>>>>>,j
