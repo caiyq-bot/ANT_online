@@ -2,7 +2,7 @@
  * Ant *
  ************/
 
-import { core, data, sound, util, visual, hardware } from './lib/psychojs-2026.1.3.js';
+import { core, data, sound, util, visual, hardware } from './lib/psychojs-2025.1.1.js';
 const { PsychoJS } = core;
 const { TrialHandler, MultiStairHandler } = data;
 const { Scheduler } = util;
@@ -75,6 +75,9 @@ flowScheduler.add(pracLoopLoopEnd);
 
 
 
+flowScheduler.add(BlockReadyRoutineBegin());
+flowScheduler.add(BlockReadyRoutineEachFrame());
+flowScheduler.add(BlockReadyRoutineEnd());
 const scheduleLoopLoopScheduler = new Scheduler(psychoJS);
 flowScheduler.add(scheduleLoopLoopBegin(scheduleLoopLoopScheduler));
 flowScheduler.add(scheduleLoopLoopScheduler);
@@ -116,7 +119,7 @@ async function updateInfo() {
   currentLoop = psychoJS.experiment;  // right now there are no loops
   expInfo['date'] = util.MonotonicClock.getDateStr();  // add a simple timestamp
   expInfo['expName'] = expName;
-  expInfo['psychopyVersion'] = '2026.1.3';
+  expInfo['psychopyVersion'] = '2025.1.1';
   expInfo['OS'] = window.navigator.platform;
 
 
@@ -167,6 +170,8 @@ var AskPracClock;
 var text_askprac;
 var key_resp_askprac;
 var QuitPracClock;
+var BlockReadyClock;
+var text;
 var BlockBeginClock;
 var n_this_block;
 var FixClock;
@@ -211,7 +216,7 @@ async function experimentInit() {
   text_intro = new visual.TextStim({
     win: psychoJS.window,
     name: 'text_intro',
-    text: '请将左手食指放在F键上，右手食指放在J键上。\n接下来，请你根据【中央箭头的方向】选择按键。\n\n如果中央箭头指向右边 > ，按J：\n-->-- 按J\n>>>>> 按J \n<<><< 按J\n\n如果中央箭头指向左边 < ，按F:\n--<-- 按F\n<<<<< 按F\n>><>> 按F\n\n[按空格键开始练习...]',
+    text: '请将左手食指放在Z键上，右手食指放在M键上。\n接下来，请你根据【中央箭头的方向】选择按键。\n\n如果中央箭头指向右边 > ，按M：\n-->-- 按M\n>>>>> 按M \n<<><< 按M\n\n如果中央箭头指向左边 < ，按Z:\n--<-- 按Z\n<<<<< 按Z\n>><>> 按Z\n\n[按空格键开始练习...]',
     font: 'Arial',
     units: undefined, 
     pos: [0, 0], draggable: false, height: 0.05,  wrapWidth: undefined, ori: 0.0,
@@ -359,6 +364,20 @@ async function experimentInit() {
   
   // Initialize components for Routine "QuitPrac"
   QuitPracClock = new util.Clock();
+  // Initialize components for Routine "BlockReady"
+  BlockReadyClock = new util.Clock();
+  text = new visual.TextStim({
+    win: psychoJS.window,
+    name: 'text',
+    text: '即将进入正式测试\n请将左手食指放在Z上，\n请将右手食指放在M上。',
+    font: 'Arial',
+    units: undefined, 
+    pos: [0, 0], draggable: false, height: 0.05,  wrapWidth: undefined, ori: 0.0,
+    languageStyle: 'LTR',
+    color: new util.Color('white'),  opacity: undefined,
+    depth: 0.0 
+  });
+  
   // Initialize components for Routine "BlockBegin"
   BlockBeginClock = new util.Clock();
   // Run 'Begin Experiment' code from code_bb
@@ -577,10 +596,7 @@ function WelcomeRoutineEachFrame() {
     
     // if key_resp_welcome is active this frame...
     if (key_resp_welcome.status === PsychoJS.Status.STARTED) {
-      let theseKeys = key_resp_welcome.getKeys({
-        keyList: typeof 'space' === 'string' ? ['space'] : 'space', 
-        waitRelease: false
-      });
+      let theseKeys = key_resp_welcome.getKeys({keyList: 'space', waitRelease: false});
       _key_resp_welcome_allKeys = _key_resp_welcome_allKeys.concat(theseKeys);
       if (_key_resp_welcome_allKeys.length > 0) {
         key_resp_welcome.keys = _key_resp_welcome_allKeys[_key_resp_welcome_allKeys.length - 1].name;  // just the last key pressed
@@ -725,10 +741,7 @@ function IntroRoutineEachFrame() {
     
     // if key_resp_intro is active this frame...
     if (key_resp_intro.status === PsychoJS.Status.STARTED) {
-      let theseKeys = key_resp_intro.getKeys({
-        keyList: typeof 'space' === 'string' ? ['space'] : 'space', 
-        waitRelease: false
-      });
+      let theseKeys = key_resp_intro.getKeys({keyList: 'space', waitRelease: false});
       _key_resp_intro_allKeys = _key_resp_intro_allKeys.concat(theseKeys);
       if (_key_resp_intro_allKeys.length > 0) {
         key_resp_intro.keys = _key_resp_intro_allKeys[_key_resp_intro_allKeys.length - 1].name;  // just the last key pressed
@@ -951,7 +964,7 @@ function scheduleLoopLoopBegin(scheduleLoopLoopScheduler, snapshot) {
     // set up handler to look after randomisation of conditions etc
     scheduleLoop = new TrialHandler({
       psychoJS: psychoJS,
-      nReps: n_blocks, method: TrialHandler.Method.SEQUENTIAL,
+      nReps: n_blocks, method: TrialHandler.Method.RANDOM,
       extraInfo: expInfo, originPath: undefined,
       trialList: undefined,
       seed: undefined, name: 'scheduleLoop'
@@ -1525,10 +1538,7 @@ function Target_pracRoutineEachFrame() {
     
     // if key_resp_target_prac is active this frame...
     if (key_resp_target_prac.status === PsychoJS.Status.STARTED) {
-      let theseKeys = key_resp_target_prac.getKeys({
-        keyList: typeof ['f','j'] === 'string' ? [['f','j']] : ['f','j'], 
-        waitRelease: false
-      });
+      let theseKeys = key_resp_target_prac.getKeys({keyList: ['z','m'], waitRelease: false});
       _key_resp_target_prac_allKeys = _key_resp_target_prac_allKeys.concat(theseKeys);
       if (_key_resp_target_prac_allKeys.length > 0) {
         key_resp_target_prac.keys = _key_resp_target_prac_allKeys[_key_resp_target_prac_allKeys.length - 1].name;  // just the last key pressed
@@ -1815,10 +1825,7 @@ function AskPracRoutineEachFrame() {
     
     // if key_resp_askprac is active this frame...
     if (key_resp_askprac.status === PsychoJS.Status.STARTED) {
-      let theseKeys = key_resp_askprac.getKeys({
-        keyList: typeof ['m','z'] === 'string' ? [['m','z']] : ['m','z'], 
-        waitRelease: false
-      });
+      let theseKeys = key_resp_askprac.getKeys({keyList: ['m','z'], waitRelease: false});
       _key_resp_askprac_allKeys = _key_resp_askprac_allKeys.concat(theseKeys);
       if (_key_resp_askprac_allKeys.length > 0) {
         key_resp_askprac.keys = _key_resp_askprac_allKeys[_key_resp_askprac_allKeys.length - 1].name;  // just the last key pressed
@@ -1973,6 +1980,121 @@ function QuitPracRoutineEnd(snapshot) {
     // the Routine "QuitPrac" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset();
     
+    // Routines running outside a loop should always advance the datafile row
+    if (currentLoop === psychoJS.experiment) {
+      psychoJS.experiment.nextEntry(snapshot);
+    }
+    return Scheduler.Event.NEXT;
+  }
+}
+
+
+var BlockReadyMaxDurationReached;
+var BlockReadyMaxDuration;
+var BlockReadyComponents;
+function BlockReadyRoutineBegin(snapshot) {
+  return async function () {
+    TrialHandler.fromSnapshot(snapshot); // ensure that .thisN vals are up to date
+    
+    //--- Prepare to start Routine 'BlockReady' ---
+    t = 0;
+    frameN = -1;
+    continueRoutine = true; // until we're told otherwise
+    // keep track of whether this Routine was forcibly ended
+    routineForceEnded = false;
+    BlockReadyClock.reset(routineTimer.getTime());
+    routineTimer.add(5.000000);
+    BlockReadyMaxDurationReached = false;
+    // update component parameters for each repeat
+    psychoJS.experiment.addData('BlockReady.started', globalClock.getTime());
+    BlockReadyMaxDuration = null
+    // keep track of which components have finished
+    BlockReadyComponents = [];
+    BlockReadyComponents.push(text);
+    
+    for (const thisComponent of BlockReadyComponents)
+      if ('status' in thisComponent)
+        thisComponent.status = PsychoJS.Status.NOT_STARTED;
+    return Scheduler.Event.NEXT;
+  }
+}
+
+
+function BlockReadyRoutineEachFrame() {
+  return async function () {
+    //--- Loop for each frame of Routine 'BlockReady' ---
+    // get current time
+    t = BlockReadyClock.getTime();
+    frameN = frameN + 1;// number of completed frames (so 0 is the first frame)
+    // update/draw components on each frame
+    
+    // *text* updates
+    if (t >= 0.0 && text.status === PsychoJS.Status.NOT_STARTED) {
+      // keep track of start time/frame for later
+      text.tStart = t;  // (not accounting for frame time here)
+      text.frameNStart = frameN;  // exact frame index
+      
+      text.setAutoDraw(true);
+    }
+    
+    
+    // if text is active this frame...
+    if (text.status === PsychoJS.Status.STARTED) {
+    }
+    
+    frameRemains = 0.0 + 5 - psychoJS.window.monitorFramePeriod * 0.75;// most of one frame period left
+    if (text.status === PsychoJS.Status.STARTED && t >= frameRemains) {
+      // keep track of stop time/frame for later
+      text.tStop = t;  // not accounting for scr refresh
+      text.frameNStop = frameN;  // exact frame index
+      // update status
+      text.status = PsychoJS.Status.FINISHED;
+      text.setAutoDraw(false);
+    }
+    
+    // check for quit (typically the Esc key)
+    if (psychoJS.experiment.experimentEnded || psychoJS.eventManager.getKeys({keyList:['escape']}).length > 0) {
+      return quitPsychoJS('The [Escape] key was pressed. Goodbye!', false);
+    }
+    
+    // check if the Routine should terminate
+    if (!continueRoutine) {  // a component has requested a forced-end of Routine
+      routineForceEnded = true;
+      return Scheduler.Event.NEXT;
+    }
+    
+    continueRoutine = false;  // reverts to True if at least one component still running
+    for (const thisComponent of BlockReadyComponents)
+      if ('status' in thisComponent && thisComponent.status !== PsychoJS.Status.FINISHED) {
+        continueRoutine = true;
+        break;
+      }
+    
+    // refresh the screen if continuing
+    if (continueRoutine && routineTimer.getTime() > 0) {
+      return Scheduler.Event.FLIP_REPEAT;
+    } else {
+      return Scheduler.Event.NEXT;
+    }
+  };
+}
+
+
+function BlockReadyRoutineEnd(snapshot) {
+  return async function () {
+    //--- Ending Routine 'BlockReady' ---
+    for (const thisComponent of BlockReadyComponents) {
+      if (typeof thisComponent.setAutoDraw === 'function') {
+        thisComponent.setAutoDraw(false);
+      }
+    }
+    psychoJS.experiment.addData('BlockReady.stopped', globalClock.getTime());
+    if (routineForceEnded) {
+        routineTimer.reset();} else if (BlockReadyMaxDurationReached) {
+        BlockReadyClock.add(BlockReadyMaxDuration);
+    } else {
+        BlockReadyClock.add(5.000000);
+    }
     // Routines running outside a loop should always advance the datafile row
     if (currentLoop === psychoJS.experiment) {
       psychoJS.experiment.nextEntry(snapshot);
@@ -2499,10 +2621,7 @@ function TargetRoutineEachFrame() {
     
     // if key_resp_target is active this frame...
     if (key_resp_target.status === PsychoJS.Status.STARTED) {
-      let theseKeys = key_resp_target.getKeys({
-        keyList: typeof ['f','j'] === 'string' ? [['f','j']] : ['f','j'], 
-        waitRelease: false
-      });
+      let theseKeys = key_resp_target.getKeys({keyList: ['z','m'], waitRelease: false});
       _key_resp_target_allKeys = _key_resp_target_allKeys.concat(theseKeys);
       if (_key_resp_target_allKeys.length > 0) {
         key_resp_target.keys = _key_resp_target_allKeys[_key_resp_target_allKeys.length - 1].name;  // just the last key pressed
@@ -2673,10 +2792,7 @@ function BlockEndRoutineEachFrame() {
     
     // if key_resp_BlockEnd is active this frame...
     if (key_resp_BlockEnd.status === PsychoJS.Status.STARTED) {
-      let theseKeys = key_resp_BlockEnd.getKeys({
-        keyList: typeof 'space' === 'string' ? ['space'] : 'space', 
-        waitRelease: false
-      });
+      let theseKeys = key_resp_BlockEnd.getKeys({keyList: 'space', waitRelease: false});
       _key_resp_BlockEnd_allKeys = _key_resp_BlockEnd_allKeys.concat(theseKeys);
       if (_key_resp_BlockEnd_allKeys.length > 0) {
         key_resp_BlockEnd.keys = _key_resp_BlockEnd_allKeys[_key_resp_BlockEnd_allKeys.length - 1].name;  // just the last key pressed
